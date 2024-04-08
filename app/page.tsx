@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Home() {
   const subjects = [
@@ -19,6 +20,43 @@ export default function Home() {
     detailing: "",
   });
 
+  const subdomain = "vtex9470";
+  const apiUsername = "nicolasjosino@gmail.com/token";
+  const apiToken = "rY2eonAxFkjqTW5w7dzXQY0uIWSEfrsrk4a8mnV0";
+
+  const axiosInstance = axios.create({
+    baseURL: `https://${subdomain}.zendesk.com/api/v2/`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    auth: {
+      username: apiUsername,
+      password: apiToken,
+    },
+  });
+
+  async function createTicket() {
+    try {
+      const response = await axiosInstance.post(
+        "tickets.json",
+        JSON.stringify({
+          ticket: {
+            description: ticketData.detailing,
+            requester: {
+              name: ticketData.accountName,
+              email: ticketData.requesterEmail,
+            },
+            subject: ticketData.subject,
+          },
+        })
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating ticket:", error);
+      // throw error;
+    }
+  }
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -34,6 +72,9 @@ export default function Home() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted:", ticketData);
+    createTicket().finally(() => {
+      window.confirm("ticket created successfully!");
+    });
     resetTicketData();
   };
 
@@ -51,12 +92,7 @@ export default function Home() {
       <nav className="border-b bg-slate-50 py-4">
         <div className="max-w-7xl px-4 flex justify-between items-start">
           <div className="">
-            <Image
-              src="VTEX_Logo.svg"
-              alt="Logo"
-              width={120}
-              height={30}
-            />
+            <Image src="VTEX_Logo.svg" alt="Logo" width={120} height={30} />
           </div>
         </div>
       </nav>
@@ -140,6 +176,7 @@ export default function Home() {
             </div>
             <div className=" flex justify-end space-x-3">
               <button
+                type="button"
                 className="border bg-white text-pink-600 px-4 py-2 rounded-md hover:bg-slate-100"
                 onClick={resetTicketData}
               >
