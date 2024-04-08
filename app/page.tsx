@@ -13,11 +13,19 @@ export default function Home() {
     "Others",
   ];
 
+  let customFields: { key: string; value: string | boolean }[] = [];
+
   const [ticketData, setTicketData] = useState({
     accountName: "",
     requesterEmail: "",
     subject: "",
     detailing: "",
+    orderNumber: "",
+    affectsAllOrders: false,
+    transactionNumber: "",
+    transactionStatus: "",
+    paymentAcquirer: "",
+    skuId: "",
   });
 
   const subdomain = "vtex9470";
@@ -35,8 +43,34 @@ export default function Home() {
     },
   });
 
+  function setCustomFields() {
+    if (ticketData.subject === "Orders") {
+      customFields.push({ key: "order_number", value: ticketData.orderNumber });
+      customFields.push({
+        key: "affects_all_orders",
+        value: ticketData.affectsAllOrders,
+      });
+    } else if (ticketData.subject === "Payments") {
+      customFields.push({
+        key: "transaction_number",
+        value: ticketData.transactionNumber,
+      });
+      customFields.push({
+        key: "transaction_status",
+        value: ticketData.transactionStatus,
+      });
+      customFields.push({
+        key: "payment_acquirer",
+        value: ticketData.paymentAcquirer,
+      });
+    } else if (ticketData.subject === "Catalog") {
+      customFields.push({ key: "skuid", value: ticketData.skuId });
+    }
+  }
+
   async function createTicket() {
     try {
+      setCustomFields();
       const response = await axiosInstance.post(
         "tickets.json",
         JSON.stringify({
@@ -47,6 +81,7 @@ export default function Home() {
               email: ticketData.requesterEmail,
             },
             subject: ticketData.subject,
+            custom_fields: ticketData.subject !== "Others" ? customFields : [],
           },
         })
       );
@@ -62,18 +97,26 @@ export default function Home() {
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    const { name, value } = e.target;
-    setTicketData({
-      ...ticketData,
-      [name]: value,
-    });
+    const { name, value, type } = e.target;
+    if (type === "checkbox") {
+      const checkboxValue = (e.target as HTMLInputElement).checked;
+      setTicketData({
+        ...ticketData,
+        [name]: checkboxValue,
+      });
+    } else {
+      setTicketData({
+        ...ticketData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted:", ticketData);
     createTicket().finally(() => {
-      window.confirm("ticket created successfully!");
+      window.confirm("Ticket created successfully!");
     });
     resetTicketData();
   };
@@ -84,6 +127,12 @@ export default function Home() {
       requesterEmail: "",
       subject: "",
       detailing: "",
+      orderNumber: "",
+      affectsAllOrders: false,
+      transactionNumber: "",
+      transactionStatus: "",
+      paymentAcquirer: "",
+      skuId: "",
     });
   }
 
@@ -168,7 +217,6 @@ export default function Home() {
               </select>
             </div>
 
-            {/* Extra fields */}
             {OrderFields()}
             {PaymentFields()}
             {CatalogFields()}
@@ -229,7 +277,7 @@ export default function Home() {
               id="orderNumber"
               type="text"
               name="orderNumber"
-              // value={ticketData.accountName}
+              value={ticketData.orderNumber}
               onChange={handleInputChange}
               className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
               placeholder="Example: 1234"
@@ -247,10 +295,8 @@ export default function Home() {
               id="affectsAllOrders"
               type="checkbox"
               name="affectsAllOrders"
-              // value={ticketData.accountName}
+              checked={ticketData.affectsAllOrders}
               onChange={handleInputChange}
-              // className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
-              placeholder="Example: 1234"
             />
           </div>
         </section>
@@ -262,42 +308,42 @@ export default function Home() {
     if (ticketData.subject === "Payments") {
       return (
         <section>
-          <div className="flex">
-          <div className="mb-4">
-            <label
-              htmlFor="transactionNumber"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Transaction Number
-            </label>
-            <input
-              id="transactionNumber"
-              type="text"
-              name="transactionNumber"
-              // value={ticketData.accountName}
-              onChange={handleInputChange}
-              className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
-              placeholder="Example: 1234"
-            />
-          </div>
+          <div className="flex items-end">
+            <div className="mb-4">
+              <label
+                htmlFor="transactionNumber"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Transaction Number
+              </label>
+              <input
+                id="transactionNumber"
+                type="text"
+                name="transactionNumber"
+                value={ticketData.transactionNumber}
+                onChange={handleInputChange}
+                className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
+                placeholder="Example: 1234"
+              />
+            </div>
 
-          <div className="mb-4 pl-10">
-            <label
-              htmlFor="transactionStatus"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Transaction Status
-            </label>
-            <input
-              id="transactionStatus"
-              type="text"
-              name="transactionStatus"
-              // value={ticketData.accountName}
-              onChange={handleInputChange}
-              className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
-              placeholder="Example: Invoiced"
-            />
-          </div>
+            <div className="mb-4 pl-10">
+              <label
+                htmlFor="transactionStatus"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Transaction Status
+              </label>
+              <input
+                id="transactionStatus"
+                type="text"
+                name="transactionStatus"
+                value={ticketData.transactionStatus}
+                onChange={handleInputChange}
+                className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
+                placeholder="Example: Invoiced"
+              />
+            </div>
           </div>
 
           <div className="mb-4">
@@ -311,13 +357,13 @@ export default function Home() {
               id="paymentAcquirer"
               type="text"
               name="paymentAcquirer"
-              // value={ticketData.accountName}
+              value={ticketData.paymentAcquirer}
               onChange={handleInputChange}
               className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
-              placeholder="Example: 1234"
+              placeholder="Example: Visa"
             />
           </div>
-        </section>        
+        </section>
       );
     }
   }
@@ -337,15 +383,13 @@ export default function Home() {
               id="skuId"
               type="text"
               name="skuId"
-              // value={ticketData.accountName}
+              value={ticketData.skuId}
               onChange={handleInputChange}
               className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
               placeholder="Example: 1234"
             />
           </div>
-
-          
-        </section>       
+        </section>
       );
     }
   }
