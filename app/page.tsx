@@ -87,6 +87,16 @@ export default function Home() {
     });
   }
 
+  const isFormValid = () => {
+    return (
+      ticketData.accountName.trim() !== "" &&
+      ticketData.requesterEmail.trim() !== "" &&
+      ticketData.subject !== "" &&
+      ticketData.detailing.trim() !== "" &&
+      ticketData.subject !== "Choose a Subject"
+    );
+  };
+
   return (
     <div>
       <nav className="border-b bg-slate-50 py-4">
@@ -184,7 +194,10 @@ export default function Home() {
               </button>
               <button
                 type="submit"
-                className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600"
+                disabled={!isFormValid()}
+                className={`bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 ${
+                  !isFormValid() ? "cursor-not-allowed opacity-50" : ""
+                }`}
               >
                 Submit
               </button>
