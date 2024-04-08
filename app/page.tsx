@@ -167,6 +167,12 @@ export default function Home() {
                 ))}
               </select>
             </div>
+
+            {/* Extra fields */}
+            {OrderFields()}
+            {PaymentFields()}
+            {CatalogFields()}
+
             <div className="mb-4">
               <label
                 htmlFor="detailing"
@@ -207,4 +213,140 @@ export default function Home() {
       </div>
     </div>
   );
+
+  function OrderFields() {
+    if (ticketData.subject === "Orders") {
+      return (
+        <section className="flex justify-between">
+          <div className="mb-4">
+            <label
+              htmlFor="orderNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Order Number
+            </label>
+            <input
+              id="orderNumber"
+              type="text"
+              name="orderNumber"
+              // value={ticketData.accountName}
+              onChange={handleInputChange}
+              className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
+              placeholder="Example: 1234"
+            />
+          </div>
+
+          <div className="mb-4 self-center">
+            <label
+              htmlFor="orderNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Affects All Orders?
+            </label>
+            <input
+              id="affectsAllOrders"
+              type="checkbox"
+              name="affectsAllOrders"
+              // value={ticketData.accountName}
+              onChange={handleInputChange}
+              // className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
+              placeholder="Example: 1234"
+            />
+          </div>
+        </section>
+      );
+    }
+  }
+
+  function PaymentFields() {
+    if (ticketData.subject === "Payments") {
+      return (
+        <section>
+          <div className="flex">
+          <div className="mb-4">
+            <label
+              htmlFor="transactionNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Transaction Number
+            </label>
+            <input
+              id="transactionNumber"
+              type="text"
+              name="transactionNumber"
+              // value={ticketData.accountName}
+              onChange={handleInputChange}
+              className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
+              placeholder="Example: 1234"
+            />
+          </div>
+
+          <div className="mb-4 pl-10">
+            <label
+              htmlFor="transactionStatus"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Transaction Status
+            </label>
+            <input
+              id="transactionStatus"
+              type="text"
+              name="transactionStatus"
+              // value={ticketData.accountName}
+              onChange={handleInputChange}
+              className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
+              placeholder="Example: Invoiced"
+            />
+          </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="paymentAcquirer"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Payment Acquirer
+            </label>
+            <input
+              id="paymentAcquirer"
+              type="text"
+              name="paymentAcquirer"
+              // value={ticketData.accountName}
+              onChange={handleInputChange}
+              className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
+              placeholder="Example: 1234"
+            />
+          </div>
+        </section>        
+      );
+    }
+  }
+
+  function CatalogFields() {
+    if (ticketData.subject === "Catalog") {
+      return (
+        <section className="flex justify-between">
+          <div className="mb-4">
+            <label
+              htmlFor="skuId"
+              className="block text-sm font-medium text-gray-700"
+            >
+              SkuId
+            </label>
+            <input
+              id="skuId"
+              type="text"
+              name="skuId"
+              // value={ticketData.accountName}
+              onChange={handleInputChange}
+              className="mt-1 p-2 block w-full border outline-none border-gray-300 rounded-md border-grey-600  focus:border-pink-600"
+              placeholder="Example: 1234"
+            />
+          </div>
+
+          
+        </section>       
+      );
+    }
+  }
 }
